@@ -5,6 +5,7 @@ import {
   Navigate,
   Route,
   RouterProvider,
+  useLocation,
 } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import Cart from "./Cart";
@@ -22,17 +23,15 @@ function App() {
 
 const ProtectedRoute = ({ element }) => {
   const { user } = useAuth();
-  return user ? element : <Navigate to="/login" replace />;
+  const location = useLocation();
+  return user?.user.username ? (
+    element
+  ) : (
+    <Navigate to="/login" replace state={{ from: location }} />
+  );
 };
 
-function AppContent() {
-  // const { user } = useAuth();
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // useEffect(() => {
-  //   setIsAuthenticated(!!user);
-  // }, [user]);
-
+const AppContent = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
@@ -50,6 +49,6 @@ function AppContent() {
   );
 
   return <RouterProvider router={router} />;
-}
+};
 
 export default App;

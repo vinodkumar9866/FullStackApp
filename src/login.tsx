@@ -1,28 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button, Container, Row, Col, InputGroup } from "react-bootstrap";
 import { FaUser, FaLock } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "./Auth";
+import { axiosRequest } from "./utils/axios";
+import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const { login, user } = useAuth();
+  const { setUpLocalUser, user } = useAuth();
   const navigate = useNavigate();
-
+  // const dispatch = useDispatch();
+  const location = useLocation();
   // Redirect if already authenticated
   useEffect(() => {
-    console.log(user);
-    if (user) {
-      navigate("/dashboard"); // Redirect to dashboard or another route
+    if (user && window.location.pathname === "/login") {
+      const redirectTo = location.state?.from?.pathname || "/dashboard";
+      navigate(redirectTo, { replace: true });
     }
-  }, [user, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  const loginUser = async () => {
+    axiosRequest("post", "/login", { username, password })
+      .then((response) => {
+        // dispatch(setUser(response.data));
+        setUpLocalUser(response.data);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle login logic here
-    login(username);
-    navigate("/dashboard");
+    loginUser();
   };
 
   return (

@@ -1,26 +1,25 @@
 import React, { useState } from "react";
 import { Button, Card } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { FaInfoCircle } from "react-icons/fa";
 import PopupModal from "./common/modal";
-import { add } from "./store/CartSlice";
 import { StoreState } from "./store/store";
 import { IProduct } from "./interfaces/product";
+import { useNavigate } from "react-router-dom";
 
 interface IProductCardsProps {
   products: IProduct[];
+  addToCartCart: (productId: string) => void;
 }
-const ProductCards = ({ products }: IProductCardsProps) => {
-  const dispatch = useDispatch();
+const ProductCards = ({ products, addToCartCart }: IProductCardsProps) => {
   const cartProducts = useSelector((state: StoreState) => state.cart);
   const [modalShow, setModalShow] = useState(false);
   const [selectedItem, setSelectedItem] = useState<IProduct>({} as IProduct);
-  const addToCart = (product: IProduct) => {
-    console.log(cartProducts, product);
-    const isAlreadyInCart = cartProducts.find(
-      (cartItem) => cartItem.id === product.id
-    );
-    !isAlreadyInCart && dispatch(add(product));
+  const navigate = useNavigate();
+
+  const addToCart = (productItem: IProduct) => {
+    console.log(cartProducts, productItem);
+    addToCartCart(productItem._id);
   };
   const handleSelected = (product: IProduct) => {
     setSelectedItem(product);
@@ -29,7 +28,7 @@ const ProductCards = ({ products }: IProductCardsProps) => {
   return (
     <div className="container">
       <div className="row justify-content-md-center">
-        {products.length &&
+        {products.length > 0 &&
           products?.map((product, index) => (
             <div
               className="col-md-3"
@@ -37,7 +36,7 @@ const ProductCards = ({ products }: IProductCardsProps) => {
               key={product.id || index}
             >
               <Card style={{ width: "18rem" }} className="h-100">
-                <div className="text-center">
+                <div className="flex justify-center">
                   <Card.Img
                     variant="top"
                     src={product.image}
@@ -48,10 +47,32 @@ const ProductCards = ({ products }: IProductCardsProps) => {
                   <Card.Title>{product.title}</Card.Title>
                   <Card.Text>INR. {product.price}</Card.Text>
                 </Card.Body>
-                <Card.Footer style={{ background: "white", display: "flex" }}>
-                  <Button variant="primary" onClick={() => addToCart(product)}>
-                    Add To Cart
-                  </Button>
+                <Card.Footer
+                  style={{
+                    background: "white",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {cartProducts.data.some(
+                    (item) => item._id === product._id
+                  ) ? (
+                    <Button
+                      variant="success"
+                      onClick={() => {
+                        navigate("/cart");
+                      }}
+                    >
+                      Go to Cart
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="primary"
+                      onClick={() => addToCart(product)}
+                    >
+                      Add To Cart
+                    </Button>
+                  )}
                   <Button
                     variant="secondary"
                     style={{

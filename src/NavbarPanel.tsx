@@ -19,7 +19,7 @@ const NavbarPanel = () => {
   };
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
+    <Navbar expand="lg" bg="light" variant="light" sticky="top">
       <Container>
         <Navbar.Brand
           style={{
@@ -35,21 +35,18 @@ const NavbarPanel = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link to="/" as={Link}>
+            <Nav.Link as={Link} to="/">
               Products
             </Nav.Link>
-          </Nav>
-          <Nav className="justify-content-end">
-            <Nav.Link to="/cart" as={Link}>
-              My Bag {cartProducts.length}
+            <Nav.Link as={Link} to="/cart">
+              My Bag {cartProducts.data.length}
             </Nav.Link>
           </Nav>
-          <Nav className="justify-content-end">
+          <Nav className="ms-auto">
             <Dropdown>
-              <Dropdown.Toggle variant="contained" id="dropdown-basic">
-                {user}
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
+                {user?.user?.username || "Profile"}
               </Dropdown.Toggle>
-
               <Dropdown.Menu>
                 <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
               </Dropdown.Menu>
