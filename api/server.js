@@ -8,7 +8,8 @@ require("dotenv").config();
 const path = require("path");
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 8000;
+const DB_URL = process.env.DB_URL;
 
 app.use(express.json());
 
@@ -50,7 +51,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ["./routes/*.js"], // Path to your API routes
+  apis: ["api/routes/*.js"], // Path to your API routes
 };
 
 // Initialize Swagger JSDoc
@@ -67,7 +68,7 @@ app.use(apiRoutes);
 // Connect to MongoDB
 mongoose
   .connect(
-    process.env.DB_URL
+    DB_URL
     //   , {
     //   useNewUrlParser: true,
     //   useUnifiedTopology: true,
