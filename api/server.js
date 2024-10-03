@@ -8,7 +8,7 @@ require("dotenv").config();
 const path = require("path");
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.BACKEND_PORT || 8000;
 const DB_URL = process.env.DB_URL;
 
 app.use(express.json());
@@ -67,15 +67,12 @@ app.use(apiRoutes);
 
 // Connect to MongoDB
 mongoose
-  .connect(
-    DB_URL
-    //   , {
-    //   useNewUrlParser: true,
-    //   useUnifiedTopology: true,
-    //   tls: true,
-    //   tlsAllowInvalidCertificates: false,
-    // }
-  )
+  .connect(DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    tls: true,
+    tlsAllowInvalidCertificates: false,
+  })
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
